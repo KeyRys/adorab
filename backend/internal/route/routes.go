@@ -29,6 +29,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	cartUsecase := usecase.NewCartUsecase(cartRepo)
 	cartHandler := http.NewCartHandler(cartUsecase)
 
+	profileRepo := repository.NewProfileRepository(db)
+	profileUsecase := usecase.NewProfileUsecase(profileRepo)
+	profileHandler := http.NewProfileHandler(profileUsecase)
+
 	router.GET("/products", productHandler.GetProducts)
 	router.GET("/products/:id", productHandler.GetProductByID)
 
@@ -42,4 +46,7 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	protected.POST("/cart/add", cartHandler.AddToCart)
 	protected.GET("/cart", cartHandler.GetCart)
 	protected.DELETE("/cart/item/:id", cartHandler.RemoveItem)
+
+	protected.GET("/profile/me", profileHandler.GetMyProfile)
+	protected.PUT("/profile", profileHandler.UpdateProfile)
 }
