@@ -47,6 +47,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	sellerOrderUsecase := usecase.NewSellerOrderUsecase(orderRepo)
 	sellerOrderHandler := http.NewSellerOrderHandler(sellerOrderUsecase)
 
+	relationRepo := repository.NewRabbitRelationRepository(db)
+	relationUsecase := usecase.NewRabbitRelationUsecase(relationRepo)
+	relationHandler := http.NewRabbitRelationHandler(relationUsecase)
+
 	router.GET("/products", productHandler.GetProducts)
 	router.GET("/products/:id", productHandler.GetProductByID)
 
@@ -75,4 +79,7 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	protected.GET("/orders/me", orderHandler.GetBuyerOrders)
 	protected.GET("/orders/seller", sellerOrderHandler.GetSellerOrders)
 	protected.PUT("/orders/:id", sellerOrderHandler.UpdateOrderStatus)
+
+	protected.POST("/seller/relations", relationHandler.CreateRelation)
+	protected.GET("/seller/relations", relationHandler.GetSellerRelation)
 }
