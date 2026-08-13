@@ -37,6 +37,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	sellerUsecase := usecase.NewSellerUsecase(sellerRepo)
 	sellerHandler := http.NewSellerHandler(sellerUsecase)
 
+	checkoutRepo := repository.NewCheckoutRepository(db)
+	checkoutUsecase := usecase.NewCheckoutUsecase(checkoutRepo)
+	checkoutHandler := http.NewCheckoutHandler(checkoutUsecase)
+
 	router.GET("/products", productHandler.GetProducts)
 	router.GET("/products/:id", productHandler.GetProductByID)
 
@@ -59,4 +63,6 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	protected.POST("/seller/rabbits", sellerHandler.CreateRabbit)
 	protected.PUT("/seller/rabbits/:id", sellerHandler.UpdateRabbit)
 	protected.DELETE("/seller/rabbits/:id", sellerHandler.DeleteRabbit)
+
+	protected.POST("/checkout", checkoutHandler.Checkout)
 }
