@@ -2,6 +2,7 @@ package routes
 
 import (
 	"adoend/internal/delivery/http"
+	"adoend/internal/delivery/http/middleware"
 	"adoend/internal/repository"
 	"adoend/internal/usecase"
 
@@ -24,6 +25,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	authUsecase := usecase.NewAuthUsecase(authRepo, secret)
 	authHandler := http.NewAuthHandler(authUsecase)
 
+	cartRepo := repository.NewCartRepository(db)
+	cartUsecase := usecase.NewCartUsecase(cartRepo)
+	cartHandler := http.NewCartHandler(cartUsecase)
+
 	router.GET("/products", productHandler.GetProducts)
 	router.GET("/products/:id", productHandler.GetProductByID)
 
@@ -31,4 +36,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	auth.POST("/register", authHandler.Register)
 	auth.POST("/login", authHandler.Login)
 
+	protected := router.Group("/")
+	protected.Use(middleware.AuthMiddleware(secret))
+
+	protected.POST("/cart/add", cartHandler.AddToCart)
+	protected.GET("/cart", cartHandler.GetCart)
+	protected.DELETE("/cart/item/:id", cartHandler.RemoveItem)
 }
