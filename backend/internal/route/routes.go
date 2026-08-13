@@ -33,6 +33,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 	profileUsecase := usecase.NewProfileUsecase(profileRepo)
 	profileHandler := http.NewProfileHandler(profileUsecase)
 
+	sellerRepo := repository.NewSellerRepository(db)
+	sellerUsecase := usecase.NewSellerUsecase(sellerRepo)
+	sellerHandler := http.NewSellerHandler(sellerUsecase)
+
 	router.GET("/products", productHandler.GetProducts)
 	router.GET("/products/:id", productHandler.GetProductByID)
 
@@ -49,4 +53,10 @@ func SetupRoutes(router *gin.Engine, db *pgx.Conn, secret string) {
 
 	protected.GET("/profile/me", profileHandler.GetMyProfile)
 	protected.PUT("/profile", profileHandler.UpdateProfile)
+
+	protected.POST("/seller/up", sellerHandler.BecomeSeller)
+	protected.GET("/seller/rabbits", sellerHandler.GetSellerRabbits)
+	protected.POST("/seller/rabbits", sellerHandler.CreateRabbit)
+	protected.PUT("/seller/rabbits/:id", sellerHandler.UpdateRabbit)
+	protected.DELETE("/seller/rabbits/:id", sellerHandler.DeleteRabbit)
 }
