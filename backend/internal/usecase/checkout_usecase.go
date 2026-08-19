@@ -1,14 +1,15 @@
 package usecase
 
+/*
 import (
 	"adoend/internal/repository"
-)
+)*/
 
 type CheckoutUsecase struct {
-	CheckoutRepo *repository.CheckoutRepository
+	CheckoutRepo CheckoutRepository
 }
 
-func NewCheckoutUsecase(checkoutRepo *repository.CheckoutRepository) *CheckoutUsecase {
+func NewCheckoutUsecase(checkoutRepo CheckoutRepository) *CheckoutUsecase {
 	return &CheckoutUsecase{CheckoutRepo: checkoutRepo}
 }
 
