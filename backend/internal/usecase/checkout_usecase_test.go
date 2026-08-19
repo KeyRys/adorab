@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"testing"
 
 	"adoend/internal/domain"
@@ -99,5 +100,33 @@ func TestCheckout_Success(t *testing.T) {
 
 	if repo.cartClearedForUser != "user-1" {
 		t.Errorf("Expected cart cleared for user 'user-1', but got %s", repo.cartClearedForUser)
+	}
+}
+
+func TestCheckout_GetCartItemsError(t *testing.T) {
+	expectedErr := errors.New("failed to get cart items")
+
+	repo := &MockCheckoutRepository{
+		getCartItemsErr: expectedErr,
+	}
+
+	usecase := NewCheckoutUsecase(repo)
+
+	err := usecase.Checkout("user-1")
+
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("expected error %v, but got %v", expectedErr, err)
+	}
+
+	if repo.createdOrderID != "" {
+		t.Error("expected order not to be created")
+	}
+
+	if len(repo.createdOrderItems) != 0 {
+		t.Error("expected no order items to be created")
+	}
+
+	if repo.cartClearedForUser != "" {
+		t.Error("expected cart not to be cleared")
 	}
 }
