@@ -26,7 +26,7 @@ The project is built using a Clean Architecture-inspired structure with PostgreS
 * **Go Testing**
 
 ## Architecture
-
+```
 backend/
 ├── cmd/            # Application entry point
 ├── internal/
@@ -37,7 +37,7 @@ backend/
 │   └── usecase/    # Business logic
 └── pkg/
     └── database/   # Database configuration
-
+```
 Request flow:
 
 HTTP → Handler → Usecase → Repository → PostgreSQL
@@ -49,13 +49,17 @@ Automated backend tests are developed in the:
 branch.
 
 Run tests with:
+```
 go test ./...
-
+```
 Verbose output:
+```
 go test -v ./...
-
+```
 Coverage:
+```
 go test ./... -cover
+```
 
 ## 🚀 Getting Started
 
