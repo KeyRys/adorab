@@ -26,7 +26,7 @@ The project is built using a Clean Architecture-inspired structure with PostgreS
 * **Go Testing**
 
 ## Architecture
-
+```
 backend/
 ├── cmd/            # Application entry point
 ├── internal/
@@ -37,7 +37,7 @@ backend/
 │   └── usecase/    # Business logic
 └── pkg/
     └── database/   # Database configuration
-
+```
 Request flow:
 
 HTTP → Handler → Usecase → Repository → PostgreSQL
