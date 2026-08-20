@@ -199,7 +199,7 @@ func TestCheckout_CreateOrderItemError(t *testing.T) {
 	}
 
 	if repo.createdOrderID == "" {
-		t.Error("expected order ID to be created")
+		t.Error("expected order to be created before order item creation")
 	}
 
 	if len(repo.createdOrderItems) != 0 {
@@ -208,5 +208,45 @@ func TestCheckout_CreateOrderItemError(t *testing.T) {
 
 	if repo.cartClearedForUser != "" {
 		t.Error("expected cart not to be cleared")
+	}
+}
+
+func TestCheckout_ClearCartError(t *testing.T) {
+	expectedErr := errors.New("failed to clear cart")
+
+	repo := &MockCheckoutRepository{
+		items: []domain.CheckoutItem{
+			{
+				RabbitID: "rabbit-1",
+				SellerID: "seller-1",
+				Price:    100,
+			},
+			{
+				RabbitID: "rabbit-2",
+				SellerID: "seller-2",
+				Price:    250,
+			},
+		},
+		clearCartErr: expectedErr,
+	}
+
+	usecase := NewCheckoutUsecase(repo)
+
+	err := usecase.Checkout("user-1")
+
+	if !errors.Is(err, expectedErr) {
+		t.Fatalf("expected error %v, but got %v", expectedErr, err)
+	}
+
+	if repo.createdOrderID == "" {
+		t.Error("expected order to be created")
+	}
+
+	if len(repo.createdOrderItems) != 2 {
+		t.Error("expected 2 order items to be created")
+	}
+
+	if repo.cartClearedForUser != "" {
+		t.Error("expected cart to be cleared failing")
 	}
 }
